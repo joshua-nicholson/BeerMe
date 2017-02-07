@@ -17,7 +17,7 @@ import com.google.firebase.auth.FirebaseAuth;
  * Created by Josh on 2/6/2017.
  */
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class RegistrationActivity extends AppCompatActivity implements View.OnClickListener {
 
 
     private Button buttonRegister;
@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceSate) {
         super.onCreate(savedInstanceSate);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_registration);
 
         firebaseAuth = FirebaseAuth.getInstance();
         buttonRegister = (Button) findViewById(R.id.register);
@@ -55,10 +55,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful())
                         {
-                            Toast.makeText(MainActivity.this, "Registration successful!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(RegistrationActivity.this, "Registration successful!", Toast.LENGTH_SHORT).show();
                         }
                         else{
-                            Toast.makeText(MainActivity.this, "Registration unsuccessful! :(", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(RegistrationActivity.this, "Registration unsuccessful! :(", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
