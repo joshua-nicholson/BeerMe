@@ -1,0 +1,197 @@
+<!--Firebase-->
+<script xmlns:v-on="http://www.w3.org/1999/xhtml" xmlns:v-on="http://www.w3.org/1999/xhtml"
+        xmlns:v-on="http://www.w3.org/1999/xhtml" xmlns:v-on="http://www.w3.org/1999/xhtml">
+    // Initialize Firebase
+    var config = {
+        apiKey: "AIzaSyC3IdMisDRfDbtxEe0H42Ujz73nFLHB6DQ",
+        authDomain: "beerme-b6cd6.firebaseapp.com",
+        databaseURL: "https://beerme-b6cd6.firebaseio.com",
+        storageBucket: "beerme-b6cd6.appspot.com",
+        messagingSenderId: "864096424840"
+    };
+    firebase.initializeApp(config);
+
+    var usersRef = firebase.database().ref('users')
+
+    // create Vue app
+    var app = new Vue({
+        // element to mount to
+        el: '#app',
+        // initial data
+        data: {
+            newUser: {
+                name: '',
+                email: ''
+            }
+        },
+        // firebase binding
+        // https://github.com/vuejs/vuefire
+        firebase: {
+            users: usersRef
+        },
+        // computed property for form validation state
+        computed: {
+            validation: function () {
+                return {
+                    name: !!this.newUser.name.trim(),
+                    email: emailRE.test(this.newUser.email)
+                }
+            },
+            isValid: function () {
+                var validation = this.validation
+                return Object.keys(validation).every(function (key) {
+                    return validation[key]
+                })
+            }
+        },
+        // methods
+        methods: {
+            addUser: function () {
+                if (this.isValid) {
+                    usersRef.push(this.newUser)
+                    this.newUser.name = ''
+                    this.newUser.email = ''
+                }
+            },
+            removeUser: function (user) {
+                usersRef.child(user['.key']).remove()
+            }
+        }
+    })
+</script>
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+
+
+
+
+    <meta charset="utf-8">
+    <title>Welcome to Beer Me </title>
+    <style media="screen">
+        body {
+            font-family: Helvetica, Arial, sans-serif;
+        }
+
+        ul {
+            padding: 0;
+        }
+
+        .user {
+            height: 30px;
+            line-height: 30px;
+            padding: 10px;
+            border-top: 1px solid #eee;
+            overflow: hidden;
+            transition: all .25s ease;
+        }
+
+        .user:last-child {
+            border-bottom: 1px solid #eee;
+        }
+
+        .v-enter, .v-leave-active {
+            height: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+            border-top-width: 0;
+            border-bottom-width: 0;
+        }
+
+        .errors {
+            color: #f00;
+        }
+
+    </style>
+</head>
+<body>
+<script>
+    (function() {
+        var app = document.querySelector('#app');
+        app.signIn = function() {
+            var email = app.email;
+            var password = app.password;
+            if (!email || !password) {
+                return console.log('email and password required');
+            }
+            // Sign in user
+            firebase.auth().signInWithEmailAndPassword(email, password)
+                .catch(function(error) {
+                    // Handle Errors here.
+                    var errorCode = error.code;
+                    var errorMessage = error.message;
+                    console.log('signIn error', error);
+                    // ...
+                });
+        };
+        app.register = function() {
+            var email = app.email;
+            var password = app.password;
+            if (!email || !password) {
+                return console.log('email and password required');
+            }
+            // Register user
+            firebase.auth().createUserWithEmailAndPassword(email, password)
+                .catch(function(error) {
+                    console.log('register error', error);
+                    if (error.code === 'auth/email-already-in-use') {
+                        var credential = firebase.auth.EmailAuthProvider.credential(email, password);
+                        app.signInWithGoogle()
+                            .then(function() {
+                                firebase.auth().currentUser.link(credential)
+                                    .then(function(user) {
+                                        console.log("Account linking success", user);
+                                    }, function(error) {
+                                        console.log("Account linking error", error);
+                                    });
+                            });
+                    }
+                });
+        };
+        app.signInWithGoogle = function() {
+            // Sign in with Google
+            var provider = new firebase.auth.GoogleAuthProvider();
+            provider.addScope('profile');
+            provider.addScope('email');
+            return firebase.auth().signInWithPopup(provider)
+                .catch(function(error) {
+                    console.log('Google sign in error', error);
+                });
+        };
+        app.signOut = function() {
+            // Sign out
+            firebase.auth().signOut();
+        };
+        // Listen to auth state changes
+        firebase.auth().onAuthStateChanged(function(user) {
+            app.user = user;
+            console.log('user', user);
+        });
+    })();
+</script>
+
+<div id="app">
+    <ul is="transition-group">
+        <li v-for="user in users" class="user" :key="user['.key']">
+            <span> {{user.name}} - {{user.email}} </span>
+            <button v-on:click="removeUser(user)">X</button>
+        </li>
+    </ul>
+    <form id="form" v-on:submit.prevent="addUser">
+        <input type="text" v-model="newUser.name" placeholder="Username">
+        <input type="email" v-model="newUser.email" placeholder="email@email.com">
+        <input type="submit" value="Add User">
+    </form>
+    <ul class="errors">
+        <li v-show="!validation.name">Name cannot be empty.</li>
+        <li v-show="!validation.email">Please provide a valid email address.</li>
+    </ul>
+</div>
+
+</body>
+</html>
+
