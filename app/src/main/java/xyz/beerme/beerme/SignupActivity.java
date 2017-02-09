@@ -17,24 +17,26 @@ import com.google.firebase.auth.FirebaseAuth;
  * Created by Josh on 2/6/2017.
  */
 
-public class RegistrationActivity extends AppCompatActivity implements View.OnClickListener {
+public class SignupActivity extends AppCompatActivity implements View.OnClickListener {
 
 
     private Button buttonRegister;
     private EditText editTextEmail;
     private EditText editTextPassword;
+    private EditText editTextName;
 
     private FirebaseAuth firebaseAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceSate) {
         super.onCreate(savedInstanceSate);
-        setContentView(R.layout.activity_registration);
+        setContentView(R.layout.activity_signup);
 
         firebaseAuth = FirebaseAuth.getInstance();
-        buttonRegister = (Button) findViewById(R.id.register);
-        editTextEmail = (EditText) findViewById(R.id.email);
-        editTextPassword = (EditText) findViewById(R.id.password);
+        buttonRegister = (Button) findViewById(R.id.btn_signup);
+        editTextEmail = (EditText) findViewById(R.id.input_email);
+        editTextPassword = (EditText) findViewById(R.id.input_password);
+        editTextName = (EditText) findViewById(R.id.input_name);
 
         buttonRegister.setOnClickListener(this);
     }
@@ -55,10 +57,10 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful())
                         {
-                            Toast.makeText(RegistrationActivity.this, "Registration successful!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(SignupActivity.this, "Registration successful!", Toast.LENGTH_SHORT).show();
                         }
                         else{
-                            Toast.makeText(RegistrationActivity.this, "Registration unsuccessful! :(", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(SignupActivity.this, "Registration unsuccessful! :(", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
