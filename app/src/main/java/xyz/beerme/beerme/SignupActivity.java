@@ -3,6 +3,7 @@ package xyz.beerme.beerme;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -12,6 +13,9 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by Josh on 2/6/2017.
@@ -24,6 +28,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
     private EditText editTextEmail;
     private EditText editTextPassword;
     private EditText editTextName;
+    private EditText editTextConfirm;
 
     private FirebaseAuth firebaseAuth;
 
@@ -37,6 +42,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         editTextEmail = (EditText) findViewById(R.id.input_email);
         editTextPassword = (EditText) findViewById(R.id.input_password);
         editTextName = (EditText) findViewById(R.id.input_name);
+        editTextConfirm = (EditText) findViewById(R.id.input_confirm);
 
         buttonRegister.setOnClickListener(this);
     }
@@ -44,7 +50,52 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     public void onClick(View view)
     {
-        registerUser();
+        if(validate())
+            registerUser();
+    }
+
+    public boolean validate()
+    {
+        boolean valid = true;
+
+        String email = editTextEmail.getText().toString().trim();
+        String password = editTextPassword.getText().toString();
+        String name = editTextName.getText().toString();
+        String confirm = editTextConfirm.getText().toString();
+
+        if(name.isEmpty())
+        {
+            editTextName.setError("Please enter your name");
+            valid = false;
+        }
+
+        if(email.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email).matches())
+        {
+          editTextEmail.setError("Enter a valid email address");
+          valid = false;
+        }
+        else
+        {
+            editTextEmail.setError(null);
+        }
+
+        if(!passwordPattern(password))
+        {
+            editTextPassword.setError("You must have at least 6 characters and one number and letter");
+            valid = false;
+        }
+        else
+        {
+            editTextEmail.setError(null);
+        }
+
+        if(!confirm.equals(password))
+        {
+            editTextPassword.setError("Passwords do not match");
+            valid = false;
+        }
+
+        return valid;
     }
 
     private void registerUser()
@@ -64,5 +115,16 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                         }
                     }
                 });
+    }
+
+    public static boolean passwordPattern(final String password)
+    {
+        Pattern pattern;
+        Matcher matcher;
+        final String PASSWORD_PATTERN = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{6,128}$";
+        pattern = Pattern.compile(PASSWORD_PATTERN);
+        matcher = pattern.matcher(password);
+
+        return matcher.matches();
     }
 }
