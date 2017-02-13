@@ -3,4 +3,15 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="authui_colorPrimary">#3E50B4</color>
+    <color name="authui_colorPrimaryDark">#2F3E9E</color>
+    <color name="authui_colorAccent">#3E50B4</color>
+    <color name="authui_inputTextColor">#FFFFFF</color>
+    <color name="authui_inputTextColorDark">#000000</color>
+    <color name="com_facebook_blue">#3b5998</color>
+    <color name="errorColor">#DD2C00</color>
+    <color name="linkColor">#4285F4</color>
+    <color name="com_facebook_button_text_color">#ffffff</color>
+    <color name="tw__blue_default">#4099FF</color>
+    <color name="tw__solid_white">#FFFFFF</color>
 </resources>
