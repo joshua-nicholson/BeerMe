@@ -15,6 +15,30 @@
       },
       "oauth_client": [
         {
+          "client_id": "864096424840-tjlem01nu0dngd49le9sfkf7irna43cl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "xyz.beerme.beerme",
+            "certificate_hash": "9FD740F0F67AB830257D9A06C57B09A064D8EE2B"
+          }
+        },
+        {
+          "client_id": "864096424840-ir6gj66g2l1skqghkvpon4spsaiup0n1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "xyz.beerme.beerme",
+            "certificate_hash": "0C57059FBA3216F4DC6265ABEF1FBEAE79B39315"
+          }
+        },
+        {
+          "client_id": "864096424840-kqro0l8nom9vb6p7m2tmn22v3tbt0pff.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "xyz.beerme.beerme",
+            "certificate_hash": "27621548F5EE51A1391207BAC382E8E38C02E87D"
+          }
+        },
+        {
           "client_id": "864096424840-c4b6r493vgr7nml8u5gppuv572h66sqp.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -22,9 +46,6 @@
       "api_key": [
         {
           "current_key": "AIzaSyCuKvOa0WV3Ec_gKVbHxJFht-96oYF3KH0"
-        },
-        {
-          "current_key": "AIzaSyAY2Xyu1KUFXIHMtmgx3w4_PAfnMgQWeTc"
         }
       ],
       "services": {
