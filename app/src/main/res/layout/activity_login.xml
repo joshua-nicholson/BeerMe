@@ -23,40 +23,28 @@
 
             -->
 
-        <!-- Email Label -->
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp">
-            <EditText android:id="@+id/input_email"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textEmailAddress"
-                android:hint="Email" />
-        </android.support.design.widget.TextInputLayout>
+        <!-- Google Button -->
+        <Button
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            style="@style/FirebaseUI.Button.AccountChooser.GoogleButton"
+            android:text="@string/sign_in_with_google"
+            android:id="@+id/google_button"/>
 
-        <!-- Password Label -->
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp">
-            <EditText android:id="@+id/input_password"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textPassword"
-                android:hint="Password"/>
-        </android.support.design.widget.TextInputLayout>
 
-        <android.support.v7.widget.AppCompatButton
-            android:id="@+id/btn_login"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:layout_marginBottom="24dp"
-            android:padding="12dp"
-            android:text="Login"/>
+        <!-- Facebook button -->
+        <Button
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            style="@style/FirebaseUI.Button.AccountChooser.FacebookButton"
+            android:text="@string/sign_in_with_facebook"
+            android:id="@+id/facebook_button"/>
+
+
+        <!-- Email button -->
+        <Button
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            style="@style/FirebaseUI.Button.AccountChooser.EmailButton"
+            android:text="Sign in with email"
+            android:id="@+id/email_button" />
 
         <TextView android:id="@+id/link_signup"
             android:layout_width="fill_parent"
