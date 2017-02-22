@@ -14,4 +14,9 @@
     <color name="com_facebook_button_text_color">#ffffff</color>
     <color name="tw__blue_default">#4099FF</color>
     <color name="tw__solid_white">#FFFFFF</color>
+    <color name="beerme_colorPrimary">#FFC107</color>
+    <color name="beerme_colorAccent">#536DFE</color>
+    <color name="beerme_colorPrimaryDark">#FFA000</color>
+    <color name="beerme_inputTextColor">#212121</color>
+    <color name="beerme_inputTextColorDark">#000000</color>
 </resources>

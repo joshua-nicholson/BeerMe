@@ -82,5 +82,9 @@
 
     <!-- accessibility -->
     <string name="accessibility_logo">App logo</string>
+    <string name="sign_in_cancelled">SIGN IN CANCELED</string>
+    <string name="no_internet_connection">NO INTERNET CONNECTION</string>
+    <string name="unknown_sign_in_response">UNKNOWN ERROR</string>
+    <string name="unknown_error">UNKNOWN ERROR</string>
 </resources>
 

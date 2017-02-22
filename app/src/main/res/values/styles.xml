@@ -3,9 +3,18 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimary">@color/beerme_colorPrimary</item>
+        <item name="colorPrimaryDark">@color/beerme_colorPrimaryDark</item>
+        <item name="colorAccent">@color/beerme_colorAccent</item>
+        <item name="colorButtonNormal">@color/beerme_colorPrimary</item>
+        <item name="colorControlNormal">@color/beerme_colorPrimary</item>
+        <item name="colorControlActivated">@color/beerme_colorAccent</item>
+        <item name="colorControlHighlight">@color/beerme_colorAccent</item>
+        <item name="android:textColor">@color/beerme_inputTextColorDark</item>
+        <item name="android:textColorPrimary">@color/beerme_inputTextColor</item>
+        <item name="android:buttonStyle">@style/FirebaseUI.Button</item>
+        <item name="android:editTextStyle">@style/FirebaseUI.EditText</item>
+        <item name="android:windowBackground">@color/beerme_colorPrimary</item>
     </style>
 
     <style name="FirebaseUI" parent="Theme.AppCompat.Light.DarkActionBar">
