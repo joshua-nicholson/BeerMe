@@ -60,7 +60,7 @@ public class LoginActivity extends AppCompatActivity {
 
             // Successfully signed in
             if (resultCode == ResultCodes.OK) {
-                startActivity(SignedInActivity.createIntent(this, response));
+                startActivity(PostsActivity.createIntent(this, response));
                 finish();
                 return;
             } else {
