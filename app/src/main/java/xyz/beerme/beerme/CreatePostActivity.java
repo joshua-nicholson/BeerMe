@@ -3,7 +3,7 @@ package xyz.beerme.beerme;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-public class CreatePost extends AppCompatActivity {
+public class CreatePostActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
