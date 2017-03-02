@@ -29,7 +29,6 @@ dependencies {
     compile 'com.google.firebase:firebase-auth:10.2.0'
     testCompile 'junit:junit:4.12'
     compile 'com.firebaseui:firebase-ui-auth:1.2.0'
-    compile 'com.github.qiugang:EditTag:v1.2.3'
 }
 
 
