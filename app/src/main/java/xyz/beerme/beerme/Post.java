@@ -37,6 +37,12 @@ public class Post {
         this.mLocation = mLocation;
     }
 
+    public Post(String mLikes,String mDislikes)
+    {
+        this.mLikes = mLikes;
+        this.mDislikes = mDislikes;
+    }
+
     public List<String> getmTags() {
         return mTags;
     }

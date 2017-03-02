@@ -27,7 +27,7 @@ public class PostsActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(PostsActivity.this, CreatePost.class);
+                Intent intent = new Intent(PostsActivity.this, CreatePostActivity.class);
                 startActivity(intent);
             }
         });
