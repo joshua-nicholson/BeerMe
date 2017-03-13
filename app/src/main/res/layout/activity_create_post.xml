@@ -12,6 +12,7 @@
     tools:context="xyz.beerme.beerme.CreatePostActivity">
 
     <LinearLayout
+        android:id="@+id/create_post_linear_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">

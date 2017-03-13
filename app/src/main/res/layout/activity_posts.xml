@@ -12,13 +12,14 @@
     tools:context="xyz.beerme.beerme.PostsActivity">
 
     <android.support.design.widget.FloatingActionButton
-        android:src="@drawable/ic_create_black_24dp"
+        android:src="@drawable/ic_add_black_24dp"
         app:fabSize="normal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/floatingActionButton"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        app:elevation="4dp"/>
 
 </RelativeLayout>
