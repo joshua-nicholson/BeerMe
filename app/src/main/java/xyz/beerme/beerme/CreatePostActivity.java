@@ -5,6 +5,7 @@ import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.location.Location;
+import android.location.LocationManager;
 import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -64,15 +66,20 @@ public class CreatePostActivity extends AppCompatActivity implements GoogleApiCl
     private LocationRequest mLocationRequest;
 
     private static final int REQUEST_IMAGE_CAPTURE = 1;
-    private static final int REQUEST_TAKE_PHOTO = 1;
+    private static final int REQUEST_TAKE_PHOTO = 2;
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
+    private static final int MY_PERMISSION_ACCESS_COARSE_LOCATION = 420;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        //Allows use of location services
+        connectGooglePlayClient();
+
         //Open camera immediately as a photo is required
-        dispatchTakePictureIntent();
+        //TODO: Make this work
+        //dispatchTakePictureIntent();
 
         setContentView(R.layout.activity_create_post);
 
@@ -133,13 +140,6 @@ public class CreatePostActivity extends AppCompatActivity implements GoogleApiCl
                     Post post = postSnapshot.getValue(Post.class);
                     list_posts.add(post);
                 }
-
-                //TODO: Fully implement list adapter to display posts
-                //ListViewAdapter adapter = new ListViewAdapter(CreatePostActivity.this,list_posts);
-                //list_data.setAdapter(adapter);
-
-                //circular_progress.setVisibility(View.INVISIBLE);
-                //list_data.setVisibility(View.VISIBLE);
             }
 
             @Override
@@ -156,13 +156,17 @@ public class CreatePostActivity extends AppCompatActivity implements GoogleApiCl
     }
 
     private void submitNewPost() {
-
         String uid = UUID.randomUUID().toString();
         String likes = likesEditText.getText().toString();
         String dislikes = dislikesEditText.getText().toString();
+        if ( ContextCompat.checkSelfPermission( this, android.Manifest.permission.ACCESS_COARSE_LOCATION ) != PackageManager.PERMISSION_GRANTED ) {
 
+            ActivityCompat.requestPermissions( this, new String[] {  android.Manifest.permission.ACCESS_COARSE_LOCATION  },
+                    MY_PERMISSION_ACCESS_COARSE_LOCATION);
+        }
+        String location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient).toString();
 
-        Post post = new Post(uid, likes, dislikes);
+        Post post = new Post(uid, likes, dislikes, location);
         mDatabaseReference.child("posts").child(post.getmUid()).setValue(post);
         clearEditText();
     }

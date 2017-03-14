@@ -23,14 +23,14 @@ public class Post {
     private String mDislikes;
     private int mVotes;
     private String mName;
-    private Location mLocation;
+    private String mLocation;
 
     public Post()
     {
         //Needed for Firebase
     }
 
-    public Post(String mUid, List<String> mTags, Image mImage, String mLikes, String mDislikes, int mVotes, String mName, Location mLocation) {
+    public Post(String mUid, List<String> mTags, Image mImage, String mLikes, String mDislikes, int mVotes, String mName, String mLocation) {
         this.mUid = mUid;
         this.mTags = mTags;
         this.mImage = mImage;
@@ -41,11 +41,12 @@ public class Post {
         this.mLocation = mLocation;
     }
 
-    public Post(String mUid, String mLikes,String mDislikes)
+    public Post(String mUid, String mLikes,String mDislikes, String mLocation)
     {
         this.mUid = mUid;
         this.mLikes = mLikes;
         this.mDislikes = mDislikes;
+        this.mLocation = mLocation;
     }
 
     public String getmUid() {
@@ -104,11 +105,11 @@ public class Post {
         this.mName = mName;
     }
 
-    public Location getmLocation() {
+    public String getmLocation() {
         return mLocation;
     }
 
-    public void setmLocation(Location mLocation) {
+    public void setmLocation(String mLocation) {
         this.mLocation = mLocation;
     }
 }
