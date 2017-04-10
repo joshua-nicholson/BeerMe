@@ -1,5 +1,7 @@
 package xyz.beerme.beerme;
 
+import android.*;
+import android.Manifest;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
@@ -48,8 +50,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public class CreatePostActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, LocationListener {
+public class CreatePostActivity extends AppCompatActivity {
 
     private static final String FIREBASE_URL = "https://beerme-b6cd6.firebaseio.com/";
     private static final String TAG = "";
@@ -58,24 +59,19 @@ public class CreatePostActivity extends AppCompatActivity implements GoogleApiCl
     private Button submitButton;
     private DatabaseReference mDatabaseReference;
     private FirebaseDatabase mFirebaseDatabase;
-    private ImageView mImageView;
-    private String mCurrentPhotoPath;
 
     private List<Post> list_posts = new ArrayList<>();
-    private GoogleApiClient mGoogleApiClient;
-    private LocationRequest mLocationRequest;
+    private LocationManager locationManager;
+    private LocationListener locationListener;
 
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int REQUEST_TAKE_PHOTO = 2;
-    private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     private static final int MY_PERMISSION_ACCESS_COARSE_LOCATION = 420;
+    private String mCurrentPhotoPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        //Allows use of location services
-        connectGooglePlayClient();
 
         //Open camera immediately as a photo is required
         //TODO: Make this work
@@ -99,6 +95,7 @@ public class CreatePostActivity extends AppCompatActivity implements GoogleApiCl
                 submitNewPost();
             }
         });
+
 
     }
 
@@ -159,9 +156,9 @@ public class CreatePostActivity extends AppCompatActivity implements GoogleApiCl
         String uid = UUID.randomUUID().toString();
         String likes = likesEditText.getText().toString();
         String dislikes = dislikesEditText.getText().toString();
-        if ( ContextCompat.checkSelfPermission( this, android.Manifest.permission.ACCESS_COARSE_LOCATION ) != PackageManager.PERMISSION_GRANTED ) {
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
-            ActivityCompat.requestPermissions( this, new String[] {  android.Manifest.permission.ACCESS_COARSE_LOCATION  },
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION},
                     MY_PERMISSION_ACCESS_COARSE_LOCATION);
         }
         String location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient).toString();
@@ -196,82 +193,45 @@ public class CreatePostActivity extends AppCompatActivity implements GoogleApiCl
         return image;
     }
 
-    private void connectGooglePlayClient() {
-        if (mGoogleApiClient == null) {
-            mGoogleApiClient = new GoogleApiClient.Builder(this)
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this)
-                    .addApi(LocationServices.API)
-                    .build();
-        }
-    }
-
     private void clearEditText() {
         likesEditText.setText("");
         dislikesEditText.setText("");
     }
 
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        Log.i(TAG, "Location services connected.");
+    private void intializeLocationServices() {
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+
+            }
+        };
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
+            requestPermissions(new String[]{
+                    Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.INTERNET
+            }, 10);
             return;
         }
-        Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        if(location == null){
-
-        }
         else{
-            handleNewLocation(location);
+            configureButton();
+        }
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch(requestCode){
+            case 10:
+                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                    configureButton();
+                return;
         }
     }
 
-    private void handleNewLocation(Location location) {
-        Log.d(TAG, location.toString());
+    private void configureButton() {
+
+        locationManager.requestLocationUpdates("gps", 5000, 0, (android.location.LocationListener) locationListener);
     }
 
-    @Override
-    public void onConnectionSuspended(int i) {
-        Log.i(TAG, "Location services suspended. Please reconnect.");
-    }
 
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        if (connectionResult.hasResolution()) {
-            try {
-                // Start an Activity that tries to resolve the error
-                connectionResult.startResolutionForResult(this, CONNECTION_FAILURE_RESOLUTION_REQUEST);
-            } catch (IntentSender.SendIntentException e) {
-                e.printStackTrace();
-            }
-        } else {
-            Log.i(TAG, "Location services connection failed with code " + connectionResult.getErrorCode());
-        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        mGoogleApiClient.connect();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (mGoogleApiClient.isConnected()) {
-            mGoogleApiClient.disconnect();
-        }
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-        handleNewLocation(location);
-    }
 }
