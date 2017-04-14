@@ -24,6 +24,7 @@ public class Post {
     private int mVotes;
     private String mName;
     private String mLocation;
+    private String mBeer;
 
     public Post()
     {
@@ -41,12 +42,13 @@ public class Post {
         this.mLocation = mLocation;
     }
 
-    public Post(String mUid, String mLikes,String mDislikes, String mLocation)
+    public Post(String mUid, String mBeer, String mLikes,String mDislikes, String mLocation)
     {
         this.mUid = mUid;
         this.mLikes = mLikes;
         this.mDislikes = mDislikes;
         this.mLocation = mLocation;
+        this.mBeer = mBeer;
     }
 
     public String getmUid() {
@@ -111,5 +113,13 @@ public class Post {
 
     public void setmLocation(String mLocation) {
         this.mLocation = mLocation;
+    }
+
+    public String getmBeer() {
+        return mBeer;
+    }
+
+    public void setmBeer(String mBeer) {
+        this.mBeer = mBeer;
     }
 }

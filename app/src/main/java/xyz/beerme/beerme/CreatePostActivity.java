@@ -1,22 +1,28 @@
 package xyz.beerme.beerme;
 
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
+import android.location.Address;
 import android.location.Location;
-import android.location.LocationManager;
-import android.location.LocationListener;
 import android.os.Bundle;
-import android.provider.Settings;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.PopupMenu;
+import android.util.Log;
+import android.view.MenuInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
-
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.Places;
+import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -28,26 +34,25 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class CreatePostActivity extends AppCompatActivity {
+public class CreatePostActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
 
     private static final String FIREBASE_URL = "https://beerme-b6cd6.firebaseio.com/";
     private static final String TAG = "";
     private EditText likesEditText;
     private EditText dislikesEditText;
-    private Button submitButton;
     private EditText locationEditText;
+    private EditText beerEditText;
+    private Button submitButton;
     private DatabaseReference mDatabaseReference;
     private FirebaseDatabase mFirebaseDatabase;
+    private GoogleApiClient mGoogleApiClient;
 
     private List<Post> list_posts = new ArrayList<>();
-    private LocationManager locationManager;
-    private LocationListener locationListener;
-    private String latAndLong;
+    private Place myPlace;
 
-    private static final int REQUEST_IMAGE_CAPTURE = 1;
-    private static final int REQUEST_TAKE_PHOTO = 2;
-    private static final int MY_PERMISSION_ACCESS_COARSE_LOCATION = 420;
-    private static final int THIS_IS_WHERE_THE_FUN_BEGINS = 10;
+    private static final int PLACE_PICKER_REQUEST = 1;
+    private static final int REQUEST_CAMERA = 20;
+    private static final int SELECT_FILE = 30;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,14 +65,35 @@ public class CreatePostActivity extends AppCompatActivity {
         setContentView(R.layout.activity_create_post);
 
         //Create views
+        beerEditText = (EditText) findViewById(R.id.input_beer);
         likesEditText = (EditText) findViewById(R.id.input_likes);
         dislikesEditText = (EditText) findViewById(R.id.input_dislikes);
+        locationEditText = (EditText) findViewById(R.id.input_location);
         submitButton = (Button) findViewById(R.id.button_submit);
+
+        //Google Places API connection
+        mGoogleApiClient = new GoogleApiClient
+                .Builder(this)
+                .addApi(Places.PLACE_DETECTION_API)
+                .enableAutoManage(this, this)
+                .build();
 
         //Firebase
         initFirebase();
         addEventFirebaseListener();
 
+        //Ask for picture
+        getPicture();
+
+        //Location EditText listener
+        locationEditText.setOnFocusChangeListener(new View.OnFocusChangeListener(){
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(hasFocus) {
+                    displayPlacePicker();
+                }
+            }
+        });
         //Submit button listener
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,71 +101,62 @@ public class CreatePostActivity extends AppCompatActivity {
                 submitNewPost();
             }
         });
-
-        //Gets location immediately
-        getLocation();
-        locationEditText.setText(latAndLong);
-
     }
 
-    private void getLocation() {
-        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        locationListener = new LocationListener() {
-            @Override
-            public void onLocationChanged(Location location) {
-               latAndLong = location.getLatitude() + " " + location.getLongitude();
-                locationEditText.setText(latAndLong);
-            }
+    private void getPicture() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View v = getLayoutInflater().inflate(R.layout.dialog_choose_picture, null);
+        Button galleryButton = (Button) v.findViewById(R.id.button_gallery);
+        Button cameraButton = (Button) v.findViewById(R.id.button_camera);
 
-            @Override
-            public void onStatusChanged(String s, int i, Bundle bundle) {
+        builder.setView(v);
+        final AlertDialog dialog = builder.create();
+        dialog.show();
 
-            }
-
-            @Override
-            public void onProviderEnabled(String s) {
-
-            }
-
-            @Override
-            public void onProviderDisabled(String s) {
-                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                startActivity(intent);
-            }
-
-        };
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{
-                    Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.INTERNET
-            }, THIS_IS_WHERE_THE_FUN_BEGINS);
-            return;
-        }
-        else{
-            configureButton();
-        }
-
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch(requestCode){
-            case :
-                if (grantResults.length >0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                    configureButton();
-                return;
-        }
-    }
-
-    private void configureButton() {
-        submitButton.setOnClickListener(new View.OnClickListener() {
+        cameraButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                locationManager.requestLocationUpdates("gps", 5000, 0, locationListener);
-                submitNewPost();
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(intent, REQUEST_CAMERA);
+                dialog.dismiss();
+            }
+        });
+
+        galleryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(
+                        Intent.ACTION_PICK,
+                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(intent,SELECT_FILE);
+                dialog.dismiss();
             }
         });
     }
 
+    private void displayPlacePicker(){
+       if(mGoogleApiClient == null || !mGoogleApiClient.isConnected())
+           return;
+
+       PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+
+       try{
+          Intent intent = builder.build(this);
+           startActivityForResult(intent, PLACE_PICKER_REQUEST);
+       }catch (GooglePlayServicesRepairableException e){
+           Log.d( "PlacesAPI Demo", "GooglePlayServicesRepairableException thrown" );
+       } catch ( GooglePlayServicesNotAvailableException e ) {
+           Log.d( "PlacesAPI Demo", "GooglePlayServicesNotAvailableException thrown" );
+       }
+   }
+
+   @Override
+   protected void onActivityResult( int requestCode, int resultCode, Intent data ) {
+        if( requestCode == PLACE_PICKER_REQUEST && resultCode == RESULT_OK ) {
+            myPlace = PlacePicker.getPlace(data, this);
+            locationEditText.setText(myPlace.getName());
+        }
+    }
 
     private void addEventFirebaseListener() {
         //TODO: Add progress bar when submitting post
@@ -173,16 +190,11 @@ public class CreatePostActivity extends AppCompatActivity {
 
     private void submitNewPost() {
         String uid = UUID.randomUUID().toString();
+        String beer = beerEditText.getText().toString();
         String likes = likesEditText.getText().toString();
         String dislikes = dislikesEditText.getText().toString();
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
-            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION},
-                    MY_PERMISSION_ACCESS_COARSE_LOCATION);
-        }
-
-
-        Post post = new Post(uid, likes, dislikes, latAndLong);
+        Post post = new Post(uid, beer, likes, dislikes, myPlace.getName().toString());
         mDatabaseReference.child("posts").child(post.getmUid()).setValue(post);
         clearEditText();
     }
@@ -192,7 +204,14 @@ public class CreatePostActivity extends AppCompatActivity {
     private void clearEditText() {
         likesEditText.setText("");
         dislikesEditText.setText("");
+        beerEditText.setText("");
+        locationEditText.setText("");
     }
 
 
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Toast toast = new Toast(this);
+
+    }
 }

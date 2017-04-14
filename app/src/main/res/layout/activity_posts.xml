@@ -12,7 +12,7 @@
     tools:context="xyz.beerme.beerme.PostsActivity">
 
     <android.support.design.widget.FloatingActionButton
-        android:src="@drawable/ic_add_black_24dp"
+        android:src="@drawable/ic_photo_camera_black_24dp"
         app:fabSize="normal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
