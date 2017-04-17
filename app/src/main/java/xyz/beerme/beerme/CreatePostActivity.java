@@ -1,11 +1,16 @@
 package xyz.beerme.beerme;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.location.Address;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.PopupMenu;
@@ -14,6 +19,7 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -30,7 +36,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -42,6 +52,7 @@ public class CreatePostActivity extends AppCompatActivity implements GoogleApiCl
     private EditText dislikesEditText;
     private EditText locationEditText;
     private EditText beerEditText;
+    private ImageView mImageView;
     private Button submitButton;
     private DatabaseReference mDatabaseReference;
     private FirebaseDatabase mFirebaseDatabase;
@@ -53,14 +64,11 @@ public class CreatePostActivity extends AppCompatActivity implements GoogleApiCl
     private static final int PLACE_PICKER_REQUEST = 1;
     private static final int REQUEST_CAMERA = 20;
     private static final int SELECT_FILE = 30;
+    private String mCurrentPhotoPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        //Open camera immediately as a photo is required
-        //TODO: Make this work
-        //dispatchTakePictureIntent();
 
         setContentView(R.layout.activity_create_post);
 
@@ -70,6 +78,7 @@ public class CreatePostActivity extends AppCompatActivity implements GoogleApiCl
         dislikesEditText = (EditText) findViewById(R.id.input_dislikes);
         locationEditText = (EditText) findViewById(R.id.input_location);
         submitButton = (Button) findViewById(R.id.button_submit);
+        mImageView = (ImageView) findViewById(R.id.user_image);
 
         //Google Places API connection
         mGoogleApiClient = new GoogleApiClient
@@ -117,7 +126,23 @@ public class CreatePostActivity extends AppCompatActivity implements GoogleApiCl
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivityForResult(intent, REQUEST_CAMERA);
+                if(intent.resolveActivity(getPackageManager()) != null){
+                    File photoFile = null;
+                    try{
+                        photoFile = createImageFile();
+                    } catch (IOException ex){
+                        Snackbar message = Snackbar.make(findViewById(R.id.activity_create_post), "Error creating image", Snackbar.LENGTH_LONG);
+                        message.show();
+                    }
+                    if(photoFile != null){
+
+                        Uri photoURI = FileProvider.getUriForFile(CreatePostActivity.this,
+                                "xyz.beerme.beerme.provider",
+                                photoFile);
+                        intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                        startActivityForResult(intent, REQUEST_CAMERA);
+                    }
+                }
                 dialog.dismiss();
             }
         });
@@ -155,6 +180,12 @@ public class CreatePostActivity extends AppCompatActivity implements GoogleApiCl
         if( requestCode == PLACE_PICKER_REQUEST && resultCode == RESULT_OK ) {
             myPlace = PlacePicker.getPlace(data, this);
             locationEditText.setText(myPlace.getName());
+        }
+        if(requestCode == REQUEST_CAMERA && resultCode == RESULT_OK)
+        {
+            Bundle extras = data.getExtras();
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            mImageView.setImageBitmap(imageBitmap);
         }
     }
 
@@ -199,7 +230,19 @@ public class CreatePostActivity extends AppCompatActivity implements GoogleApiCl
         clearEditText();
     }
 
+    private File createImageFile() throws IOException{
+        String timeStamp = new SimpleDateFormat("yyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_beerme";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,
+                ".jpg",
+                storageDir
+        );
 
+        mCurrentPhotoPath = image.getAbsolutePath();
+        return image;
+    }
 
     private void clearEditText() {
         likesEditText.setText("");

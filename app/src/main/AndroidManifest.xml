@@ -22,12 +22,12 @@
             android:value="AIzaSyC3IdMisDRfDbtxEe0H42Ujz73nFLHB6DQ" />
         <provider
             android:name="android.support.v4.content.FileProvider"
-            android:authorities="com.example.android.fileprovider"
+            android:authorities="xyz.beerme.beerme.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths" />
+                android:resource="@xml/file_paths" ></meta-data>
         </provider>
         <activity android:name=".PostsActivity">
         <intent-filter>
