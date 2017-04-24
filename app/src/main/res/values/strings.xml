@@ -90,5 +90,6 @@
     <!-- Facebook sign in -->
     <string name="facebook_application_id" translatable="false">1209306992481196</string>
     <string name="facebook_login_protocol_scheme" translatable="false">fb1209306992481196</string>
+    <string name="title_activity_posts">PostsActivity</string>
 </resources>
 
