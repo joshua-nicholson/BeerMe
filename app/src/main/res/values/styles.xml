@@ -40,7 +40,7 @@
         <item name="android:backgroundDimEnabled">false</item>
     </style>
 
-    <style name="FirebaseUI.Dialog" parent="Base.Theme.AppCompat.Light.Dialog"/>
+    <style name="FirebaseUI.Dialog" parent="Base.Theme.AppCompat.Light.Dialog" />
 
     <style name="FirebaseUI.WrapperStyle">
         <item name="android:layout_height">match_parent</item>
@@ -191,7 +191,7 @@
     </style>
 
     <!-- Authentication method picker styles -->
-    <style name="FirebaseUI.AuthMethodPicker"/>
+    <style name="FirebaseUI.AuthMethodPicker" />
 
     <style name="FirebaseUI.AuthMethodPicker.Logo">
         <item name="android:layout_width">wrap_content</item>
@@ -244,5 +244,14 @@
         <item name="android:background">@drawable/idp_button_background_twitter</item>
         <item name="android:textColor">@color/tw__solid_white</item>
     </style>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
 </resources>
