@@ -1,7 +1,9 @@
 package xyz.beerme.beerme;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.location.Location;
 import android.net.Uri;
@@ -29,12 +31,17 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.location.places.ui.PlacePicker;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 import java.io.IOException;
@@ -57,6 +64,9 @@ public class CreatePostActivity extends AppCompatActivity implements GoogleApiCl
     private DatabaseReference mDatabaseReference;
     private FirebaseDatabase mFirebaseDatabase;
     private GoogleApiClient mGoogleApiClient;
+    private Context mContext;
+    private StorageReference mStorageRef;
+    private String photoUrl;
 
     private List<Post> list_posts = new ArrayList<>();
     private Place myPlace;
@@ -90,6 +100,10 @@ public class CreatePostActivity extends AppCompatActivity implements GoogleApiCl
         //Firebase
         initFirebase();
         addEventFirebaseListener();
+        mStorageRef = FirebaseStorage.getInstance().getReference();
+
+        //Gets context
+        mContext = getApplicationContext();
 
         //Ask for picture
         getPicture();
@@ -125,6 +139,7 @@ public class CreatePostActivity extends AppCompatActivity implements GoogleApiCl
         cameraButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                dialog.dismiss();
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 if(intent.resolveActivity(getPackageManager()) != null){
                     File photoFile = null;
@@ -135,15 +150,13 @@ public class CreatePostActivity extends AppCompatActivity implements GoogleApiCl
                         message.show();
                     }
                     if(photoFile != null){
-
                         Uri photoURI = FileProvider.getUriForFile(CreatePostActivity.this,
-                                "xyz.beerme.beerme.provider",
+                                "xyz.beerme.beerme.fileprovider",
                                 photoFile);
                         intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                         startActivityForResult(intent, REQUEST_CAMERA);
                     }
                 }
-                dialog.dismiss();
             }
         });
 
@@ -181,12 +194,11 @@ public class CreatePostActivity extends AppCompatActivity implements GoogleApiCl
             myPlace = PlacePicker.getPlace(data, this);
             locationEditText.setText(myPlace.getName());
         }
-        if(requestCode == REQUEST_CAMERA && resultCode == RESULT_OK)
-        {
-            Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
-            mImageView.setImageBitmap(imageBitmap);
-        }
+
+       if (requestCode == REQUEST_CAMERA && resultCode == RESULT_OK) {
+           Bitmap myBitmap = BitmapFactory.decodeFile(mCurrentPhotoPath);
+           mImageView.setImageBitmap(myBitmap);
+       }
     }
 
     private void addEventFirebaseListener() {
@@ -225,8 +237,34 @@ public class CreatePostActivity extends AppCompatActivity implements GoogleApiCl
         String likes = likesEditText.getText().toString();
         String dislikes = dislikesEditText.getText().toString();
 
-        Post post = new Post(uid, beer, likes, dislikes, myPlace.getName().toString());
-        mDatabaseReference.child("posts").child(post.getmUid()).setValue(post);
+        Uri file = Uri.fromFile(new File(mCurrentPhotoPath));
+        StorageReference photoRef = mStorageRef.child(uid + "/images/" + mCurrentPhotoPath);
+
+        photoRef.putFile(file)
+                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        // Get a URL to the uploaded content
+                        Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                        if(downloadUrl != null)
+                            photoUrl = downloadUrl.toString();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+
+                    }
+                });
+
+        if(photoUrl != null) {
+            Post post = new Post(uid, beer, likes, dislikes, myPlace.getName().toString(), photoUrl);
+            mDatabaseReference.child("posts").child(post.getmUid()).setValue(post);
+        }
+        else{
+            Post post = new Post(uid, beer, likes, dislikes, myPlace.getName().toString());
+            mDatabaseReference.child("posts").child(post.getmUid()).setValue(post);
+        }
         clearEditText();
     }
 

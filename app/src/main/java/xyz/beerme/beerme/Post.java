@@ -2,6 +2,7 @@ package xyz.beerme.beerme;
 
 import android.location.Location;
 import android.media.Image;
+import android.widget.ImageView;
 
 import com.google.firebase.database.Exclude;
 
@@ -25,30 +26,39 @@ public class Post {
     private String mName;
     private String mLocation;
     private String mBeer;
+    private String mUrl;
 
     public Post()
     {
         //Needed for Firebase
     }
 
-    public Post(String mUid, List<String> mTags, Image mImage, String mLikes, String mDislikes, int mVotes, String mName, String mLocation) {
-        this.mUid = mUid;
-        this.mTags = mTags;
-        this.mImage = mImage;
-        this.mLikes = mLikes;
-        this.mDislikes = mDislikes;
-        this.mVotes = mVotes;
-        this.mName = mName;
-        this.mLocation = mLocation;
-    }
-
-    public Post(String mUid, String mBeer, String mLikes,String mDislikes, String mLocation)
+    public Post(String mUid, String mBeer, String mLikes, String mDislikes, String mLocation)
     {
         this.mUid = mUid;
         this.mLikes = mLikes;
         this.mDislikes = mDislikes;
         this.mLocation = mLocation;
         this.mBeer = mBeer;
+    }
+
+    public String getmUrl() {
+        return mUrl;
+    }
+
+    public void setmUrl(String mUrl) {
+        this.mUrl = mUrl;
+    }
+
+    public Post(String mUid, String mBeer, String mLikes, String mDislikes, String mLocation, String mUrl)
+    {
+        this.mUid = mUid;
+        this.mLikes = mLikes;
+        this.mDislikes = mDislikes;
+        this.mLocation = mLocation;
+
+        this.mBeer = mBeer;
+        this.mUrl = mUrl;
     }
 
     public String getmUid() {
