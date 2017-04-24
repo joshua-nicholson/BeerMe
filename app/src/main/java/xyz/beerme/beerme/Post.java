@@ -23,7 +23,7 @@ public class Post {
     private String mLikes;
     private String mDislikes;
     private int mVotes;
-    private String mName;
+    private String mAuthor;
     private String mLocation;
     private String mBeer;
     private String mUrl;
@@ -50,13 +50,13 @@ public class Post {
         this.mUrl = mUrl;
     }
 
-    public Post(String mUid, String mBeer, String mLikes, String mDislikes, String mLocation, String mUrl)
+    public Post(String mUid, String mAuthor, String mBeer, String mLikes, String mDislikes, String mLocation, String mUrl)
     {
         this.mUid = mUid;
         this.mLikes = mLikes;
         this.mDislikes = mDislikes;
         this.mLocation = mLocation;
-
+        this.mAuthor = mAuthor;
         this.mBeer = mBeer;
         this.mUrl = mUrl;
     }
@@ -109,12 +109,12 @@ public class Post {
         this.mVotes = mVotes;
     }
 
-    public String getmName() {
-        return mName;
+    public String getmAuthor() {
+        return mAuthor;
     }
 
     public void setmName(String mName) {
-        this.mName = mName;
+        this.mAuthor = mAuthor;
     }
 
     public String getmLocation() {

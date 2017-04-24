@@ -29,10 +29,14 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         auth = FirebaseAuth.getInstance();
         mRootView = findViewById(R.id.root);
+
+        //Checks if user is already authenticated, if so go to main app
         if(auth.getCurrentUser() != null)
         {
             //user already signed in
             Log.d("AUTH", auth.getCurrentUser().getEmail());
+            Intent intent = new Intent(this, PostsActivity.class);
+            startActivity(intent);
         }
         else
         {
@@ -42,6 +46,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void signIn()
     {
+        //Adds service providers
         startActivityForResult(
                 AuthUI.getInstance()
                         .createSignInIntentBuilder()
@@ -54,6 +59,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        //Checks for potential errors
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == RC_SIGN_IN) {
             IdpResponse response = IdpResponse.fromResultIntent(data);

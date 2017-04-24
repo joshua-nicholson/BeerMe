@@ -8,6 +8,7 @@
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 
     <application
@@ -36,6 +37,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".CreatePostActivity"></activity>
+        <activity android:name=".PostsActivity"></activity>
     </application>
 
 </manifest>
