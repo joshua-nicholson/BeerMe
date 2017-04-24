@@ -19,7 +19,7 @@
           "client_type": 1,
           "android_info": {
             "package_name": "xyz.beerme.beerme",
-            "certificate_hash": "9fd740f0f67ab830257d9a06c57b09a064d8ee2b"
+            "certificate_hash": "9FD740F0F67AB830257D9A06C57B09A064D8EE2B"
           }
         },
         {
@@ -27,7 +27,7 @@
           "client_type": 1,
           "android_info": {
             "package_name": "xyz.beerme.beerme",
-            "certificate_hash": "0c57059fba3216f4dc6265abef1fbeae79b39315"
+            "certificate_hash": "0C57059FBA3216F4DC6265ABEF1FBEAE79B39315"
           }
         },
         {
@@ -35,7 +35,7 @@
           "client_type": 1,
           "android_info": {
             "package_name": "xyz.beerme.beerme",
-            "certificate_hash": "27621548f5ee51a1391207bac382e8e38c02e87d"
+            "certificate_hash": "27621548F5EE51A1391207BAC382E8E38C02E87D"
           }
         },
         {
@@ -46,9 +46,6 @@
       "api_key": [
         {
           "current_key": "AIzaSyCuKvOa0WV3Ec_gKVbHxJFht-96oYF3KH0"
-        },
-        {
-          "current_key": "AIzaSyAY2Xyu1KUFXIHMtmgx3w4_PAfnMgQWeTc"
         }
       ],
       "services": {

@@ -86,5 +86,9 @@
     <string name="no_internet_connection">NO INTERNET CONNECTION</string>
     <string name="unknown_sign_in_response">UNKNOWN ERROR</string>
     <string name="unknown_error">UNKNOWN ERROR</string>
+
+    <!-- Facebook sign in -->
+    <string name="facebook_application_id" translatable="false">1209306992481196</string>
+    <string name="facebook_login_protocol_scheme" translatable="false">fb1209306992481196</string>
 </resources>
 
